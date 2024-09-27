@@ -3,51 +3,50 @@ import "izitoast/dist/css/iziToast.min.css";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
-// Pixabay API anahtarını tanımla
+
 const API_KEY = '46197993-0238acfcd6230053ff5f60fb7';
 const BASE_URL = 'https://pixabay.com/api/';
 
-// DOM içeriği yüklendikten sonra çalışacak fonksiyonu tanımla
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('search-form');
     const input = document.querySelector('.search-input');
-    const gallery = document.querySelector('.gallery'); // Galeri alanını seçin
-    const loader = document.querySelector('.loader'); // Yükleme göstergesini seç
+    const gallery = document.querySelector('.gallery'); 
+    const loader = document.querySelector('.loader'); 
 
-    // Sayfa yüklendiğinde loader'ı gizle
+ 
     loader.style.display = 'none';
 
-    // Galeriyi temizleme fonksiyonu
+  
     function refreshGallery() {
         gallery.innerHTML = "";
     }
 
-    // Form gönderildiğinde çalışacak olay dinleyicisi
     form.addEventListener('submit', (e) => {
-        e.preventDefault(); // Formun varsayılan davranışını engelle
+        e.preventDefault(); 
 
-        const query = input.value.trim(); // Kullanıcıdan arama terimini al
+        const query = input.value.trim(); 
         if (!query) {
             iziToast.error({
                 title: 'Error',
                 message: 'Please enter a search query.',
             });
-            return; // Eğer arama terimi yoksa çık
+            return; 
         }
 
-        // Önce galeriyi temizle
+      
         refreshGallery();
 
-        // Loader'ı göstermeden önce küçük bir gecikme ekleyerek API çağrısı sırasında görünmesini sağla
+        
         setTimeout(async () => {
             try {
-                // Yükleme göstergesini API isteği başlamadan hemen önce göster
+               
                 loader.style.display = 'block';
 
                 const response = await fetch(`${BASE_URL}?key=${API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&orientation=horizontal&safesearch=true`);
-                const data = await response.json(); // Yanıtı JSON formatında al
+                const data = await response.json(); 
 
-                // Yükleme göstergesini gizle
+         
                 loader.style.display = 'none';
 
                 if (data.hits.length === 0) {
@@ -55,13 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         title: 'Info',
                         message: 'Sorry, there are no images matching your search query. Please try again!',
                     });
-                    return; // Eğer sonuç yoksa çık
+                    return; 
                 }
 
-                // Arama inputunu temizle
                 input.value = '';
 
-                // Görselleri ekle
+              
                 data.hits.forEach(hit => {
                     const item = document.createElement('div');
                     item.classList.add('gallery-item');
@@ -92,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     gallery.appendChild(item);
                 });
 
-                // SimpleLightbox'u yenile
+              
                 const lightbox = new SimpleLightbox('.gallery-link', {
                     captionsData: 'alt',
                     captionDelay: 250,
@@ -100,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 lightbox.refresh();
 
             } catch (error) {
-                // Hata durumunda yükleme göstergesini gizle
+               
                 loader.style.display = 'none';
                 iziToast.error({
                     title: 'Error',
@@ -108,6 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 console.error('Error:', error);
             }
-        }, 100); // 100ms'lik bir gecikme ekliyoruz.
+        }, 100); 
     });
 });
